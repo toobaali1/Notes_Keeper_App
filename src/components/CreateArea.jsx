@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Zoom from '@material-ui/core/Zoom';
 
 function CreateArea(props) {
 	const [ input, setInput ] = useState({
 		title: '',
 		content: ''
 	});
+
+	const [ isCollapsed, setIsCollapsed ] = useState(true);
 
 	const handleChange = (event) => {
 		const { name, value } = event.target;
@@ -20,29 +25,38 @@ function CreateArea(props) {
 	return (
 		<div>
 			<form
+				className="create-note"
 				onSubmit={(event) => {
 					event.preventDefault();
 				}}
 			>
-				<input name="title" placeholder="Title" onChange={handleChange} value={input.title} />
+				{!isCollapsed && <input name="title" placeholder="Title" onChange={handleChange} value={input.title} />}
+
 				<textarea
+					onClick={() => {
+						setIsCollapsed(false);
+					}}
 					name="content"
 					placeholder="Take a note..."
-					rows="3"
+					rows={isCollapsed ? '1' : '3'}
 					onChange={handleChange}
 					value={input.content}
 				/>
-				<button
-					onClick={() => {
-						props.onAdd(input.title, input.content);
-						setInput({
-							title: '',
-							content: ''
-						});
-					}}
-				>
-					Add
-				</button>
+				<Zoom in={!isCollapsed}>
+					<Fab
+						onClick={() => {
+							props.onAdd(input.title, input.content);
+							setInput({
+								title: '',
+								content: ''
+							});
+
+							setIsCollapsed(true);
+						}}
+					>
+						<AddIcon />
+					</Fab>
+				</Zoom>
 			</form>
 		</div>
 	);
